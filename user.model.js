@@ -13,11 +13,16 @@ const userSchema = new mongoose.Schema({
         trim: true,
         match: [/^[a-zA-Z0-9._%+-]+@gmail\.com$/, "Please enter a valid Gmail address"]
     },
-    password:{
+    password: {
         type: String,
         required: true,
         min: 6,
-    } 
+    }, isVerified: {
+        type: Boolean,
+        default: false
+    },
+    verificationToken: String,
+    verificationExpires: Date
 }, { timestamps: true })
 
 

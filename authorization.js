@@ -3,7 +3,7 @@ import User from "./user.model.js";
 import "dotenv/config"
 
 
-export const isAuthorised = (req, res, next) => {
+export const isAuthorised = async (req, res, next) => {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
         return res.status(400).json({ message: "Not authirrised" })
@@ -16,7 +16,7 @@ export const isAuthorised = (req, res, next) => {
     if (!decode) {
         return res.status(400).json({ message: "User not found" })
     }
-    const user = User.findById(decode.userId).select("-password")
+    const user = await User.findById(decode.userId).select("-password")
     req.user = user
     next()
 }

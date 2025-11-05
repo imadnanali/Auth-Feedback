@@ -12,7 +12,8 @@ import {
   getAllUsers,
   getUser,
   updateUser,
-  deleteUser
+  deleteUser,
+  verifyEmail
 } from "./authentication.js";
 import { isAuthorised } from "./authorization.js";
 
@@ -35,6 +36,7 @@ app.delete("/feedback/:id", isAuthorised, deleteFeedback)
 
 app.post("/signin", signIn)
 app.post("/login", logIn)
+app.get("/verify/:token", verifyEmail);
 app.get("/users", getAllUsers)
 app.get("/user/:id", isAuthorised, getUser)
 app.put("/user/:id",isAuthorised, updateUser)
