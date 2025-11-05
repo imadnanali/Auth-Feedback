@@ -21,7 +21,7 @@ export const signIn = async (req, res) => {
         console.log(user)
 
         const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY, { expiresIn: '1d' });
-        res.status(201).json({ message: "User craeted successfully", token, user})
+        res.status(201).json({ message: "User craeted successfully", token, user })
     } catch (error) {
         res.status(500).json({ message: error.message })
     }
@@ -41,13 +41,66 @@ export const logIn = async (req, res) => {
         if (!passCompare) {
             res.status(400).json({ message: "Wrong password" })
         }
-        const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY, {expiresIn: '1d'})
+        const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY, { expiresIn: '1d' })
         if (!token) {
             res.status(201).json({ message: "Token not generated" })
         }
         res.status(200).json({ message: "User login successfully", user, token })
     } catch (error) {
-        res.status(500).json({message: error.message})
+        res.status(500).json({ message: error.message })
     }
 
+}
+
+export const getAllUsers = async (req, res) => {
+    try {
+        const allUsers = await User.find().select("-password")
+        res.status(200).json(allUsers);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+
+}
+
+export const getUser = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const user = await User.findById(id).select("-password")
+        if (!user) {
+            return res.status(404).json({ message: "User not found" })
+        }
+        res.status(200).json(user)
+    } catch (error) {
+        res.status(500).json({ message: error.message })
+    }
+}
+
+
+export const updateUser = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { name, email } = req.body;
+        const userUpdate = await User.findByIdAndUpdate(
+            id,
+            { name: name, email: email },
+            { new: true }
+        ).select("-password");
+        res.status(200).json({ message: "Profile updated", userUpdate })
+    } catch (error) {
+        res.status(500).json({ message: error.messsage })
+    }
+}
+
+
+export const deleteUser = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const deletedUser = await User.findByIdAndDelete(id);
+        if (!deletedUser) {
+            res.status(401).json({ message: "User not deleted" })
+        }
+        res.status(200).json({ deletedUser })
+    } catch (error) {
+        res.status(500).json({message: error.message})
+    }
 }
